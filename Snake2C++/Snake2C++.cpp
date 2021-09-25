@@ -60,14 +60,17 @@ void initialization()
 					map[i][j] = ' ';
 				}
 
-				map[x][y] = '@';
+				if (i == x && j == y)
+				{
+					map[y][x] = '@';
+				}
 
 				if (j == width)
 				{
 					map[i][j] = '\0';
 				}
 			}
-		}		
+		}
 	}
 }
 
@@ -88,36 +91,88 @@ void keyboardInput()
 		switch (_getch())
 		{
 			case 'a':
-			{
-				key = LEFT;
+				if (key != RIGHT)
+				{
+					key = LEFT;
+				}
 				break;
-			}
 			case 'd':
-			{
-				key = RIGHT;
+				if (key != LEFT)
+				{
+					key = RIGHT;
+				}
 				break;
-			}
 			case 'w':
-			{
-				key = UP;
+				if (key != DOWN)
+				{
+					key = UP;
+				}
 				break;
-			}
 			case 's':
-			{
-				key = DOWN;
+				if (key != UP)
+				{
+					key = DOWN;
+				}
 				break;
-			}
 			case 'x':
-			{
 				gameActive = false;
 				break;
-			}
 		}
 	}
 }
 
 void gameLogic()
 {
+	if (x < 0 || y < 0 || x > width || y > height)
+	{
+		gameActive = false;
+	}
+
+	if (foodX == x || foodY == y)
+	{
+		score = +1;
+	}
+
+	for (int i = 0; i < height; i++)
+	{
+		if (i == 0 || i == height - 1)
+		{
+			for (int j = 0; j <= width; j++)
+			{
+				map[i][j] = '#';
+
+				if (j == width)
+				{
+					map[i][j] = '\0';
+				}
+			}
+		}
+		else
+		{
+			for (int j = 0; j <= width; j++)
+			{
+				if (j == 0 || j == width - 1)
+				{
+					map[i][j] = '#';
+				}
+				else
+				{
+					map[i][j] = ' ';
+				}
+
+				if (i == x && j == y)
+				{
+					map[y][x] = '@';
+				}
+
+				if (j == width)
+				{
+					map[i][j] = '\0';
+				}
+			}
+		}
+	}
+
 	switch (key)
 	{
 	case NONE:
@@ -135,16 +190,6 @@ void gameLogic()
 		x++;
 		break;
 	}
-
-	if (x < 0 || y < 0 || x > width || y > height)
-	{
-		gameActive = false;
-	}
-
-	if (foodX == x || foodY == y)
-	{
-		score = +1;
-	}
 }
 
 int main()
@@ -154,6 +199,7 @@ int main()
 	while (gameActive)
 	{
 		Draw_map();
+		keyboardInput();
 		gameLogic();
 	}
 	return 0;
